@@ -37,7 +37,7 @@ void CanHandler::handleMessages() {
     for (int i = 4; i < 7; i++) { // Non-blinking accessories
         int msgState = (msg.data[0] & (1 << i)) / pow(2,i);
         if (msgState != accessories[i].currentState) {
-            accessories[i].updateState(msg.data[i]);
+            accessories[i].updateState(msgState);
         }
     }
   }
