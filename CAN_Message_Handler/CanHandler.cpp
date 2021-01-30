@@ -27,14 +27,14 @@ void CanHandler::handleMessages() {
   CANMessage msg;
 
   if (can.read(msg)) {
-    for (int i = 0; i < 4; i++) { // Blinking accessories
+    for (int i = 0; i < 3; i++) { // Blinking accessories
         int msgState = (msg.data[0] & (1 << i)) / pow(2,i); // bitwise operations to determine state of accessory
         if (msgState != accessories[i].currentState) { // Check if state changes
             accessories[i].updateState(msgState);
             controlBlinking(i);
         }
     }
-    for (int i = 4; i < 7; i++) { // Non-blinking accessories
+    for (int i = 3; i < 7; i++) { // Non-blinking accessories
         int msgState = (msg.data[0] & (1 << i)) / pow(2,i);
         if (msgState != accessories[i].currentState) {
             accessories[i].updateState(msgState);
@@ -46,9 +46,8 @@ void CanHandler::handleMessages() {
 Ticker hazardsT;
 Ticker rightIndT;
 Ticker leftIndT;
-Ticker wipersT;
 
-Ticker tickers[] = {hazardsT, rightIndT, leftIndT, wipersT};
+Ticker tickers[] = {hazardsT, rightIndT, leftIndT};
 
 /**
 * Helper method to control blinking accessories
