@@ -10,6 +10,7 @@ class Accessory {
     void blink();
   private:
     DigitalOut accessory;
+    Ticker t;
 };
 
 #endif

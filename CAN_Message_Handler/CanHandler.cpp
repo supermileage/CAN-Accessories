@@ -20,8 +20,6 @@ Accessory accessories[] = {hazards, rightInd, leftInd, wipers, headlights, break
 CanHandler::CanHandler() {
   can.frequency(500000);
 }
-void controlBlinking(int id);
-
 
 /**
 * Reads CAN Bus messages and toggles accessories if its state has changed.
@@ -37,23 +35,4 @@ void CanHandler::handleMessages() {
         }
     }
   }
-}
-
-Ticker hazardsT;
-Ticker rightIndT;
-Ticker leftIndT;
-
-Ticker tickers[] = {hazardsT, rightIndT, leftIndT};
-
-/**
-* Helper method to control blinking accessories
-* @param: id,
-*/
-void controlBlinking(int id) {
-    int state = accessories[id].currentState;
-    if (state) {
-        tickers[id].attach(&accessories[id], &Accessory::blink, 0.5);
-    } else {
-        tickers[id].detach();
-    }
 }
