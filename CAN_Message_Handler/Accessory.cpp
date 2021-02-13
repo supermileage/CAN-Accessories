@@ -3,10 +3,12 @@
 
 #define BLINK_RATE 0.5
 
-Accessory::Accessory(PinName pin, int initialState, bool blink) : accessory(pin){
+Accessory::Accessory(PinName pin, int initialState, bool blinks, int id) : accessory(pin){
     accessory = initialState;
     currentState = initialState;
-    blinks = blink;
+    this->blinks = blinks;
+    this->id = id;
+
 }
 
 void Accessory::updateState(int newState) {

@@ -8,6 +8,7 @@ class Accessory {
     bool blinks;
     void updateState(int newState);
     void blink();
+    int id;
   private:
     DigitalOut accessory;
     Ticker t;
