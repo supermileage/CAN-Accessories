@@ -1,7 +1,6 @@
 #include "mbed.h"
 #include "CanHandler.h"
 #include "Accessory.h"
-#include <iostream>
 
 using namespace std;
 
@@ -30,9 +29,8 @@ void CanHandler::handleMessages() {
 
   if (can.read(msg)) {
     for (int i = 0; i < sizeof(accessories); i++) {
-        if ((msg.data[0] & 
-            (1 << accessories[i].id)) / pow(2,accessories[i].id) != //check bits corresponding to Accessory
-            accessories[i].currentState) {
+        int msgState = (msg.data[0] & (1 << accessories[i].id)) / pow(2,accessories[i].id);
+        if (msgState != accessories[i].currentState) {
             accessories[i].updateState(msgState);
         }
     }

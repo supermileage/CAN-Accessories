@@ -15,9 +15,9 @@ void Accessory::updateState(int newState) {
     if (currentState != newState){
         accessory = newState;
         currentState = newState;
-        if ( newState && blink ) {
+        if ( newState && blinks ) {
             t.attach(callback(this, &Accessory::blink), BLINK_RATE);
-        } else if (!newState && blink ) {
+        } else if (!newState && blinks ) {
             t.detach();
         }
     }
