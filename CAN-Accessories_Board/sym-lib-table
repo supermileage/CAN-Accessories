@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name 2021-02-19_16-08-03)(type Legacy)(uri /Users/dorayang/Downloads/ul_MCP2562FDESN/KiCAD/2021-02-19_16-08-03/2021-02-19_16-08-03.lib)(options "")(descr ""))
+  (lib (name NUCLEO-L432KC)(type Legacy)(uri /Users/dorayang/Downloads/NUCLEO-L432KC/NUCLEO-L432KC.lib)(options "")(descr ""))
+)

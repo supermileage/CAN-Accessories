@@ -1,0 +1,5 @@
+(fp_lib_table
+  (lib (name NUCLEO-L432KC)(type KiCad)(uri /Users/dorayang/Downloads/NUCLEO-L432KC)(options "")(descr ""))
+  (lib (name footprints)(type KiCad)(uri "/Users/dorayang/Downloads/ul_MCP2562FDESN (1)/KiCAD/2021-03-04_17-40-06/footprints.pretty")(options "")(descr ""))
+  (lib (name FuseClips)(type KiCad)(uri /Users/dorayang/Desktop/OneDrive/Desktop/fuseclip/SamacSys_Parts.pretty)(options "")(descr ""))
+)
