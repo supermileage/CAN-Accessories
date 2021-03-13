@@ -8,7 +8,15 @@ Messages sent to CANACC (CAAC?) (WE NEED A NICE SHORT ACRONYM LOL) (CAN Accessor
 
 Each device managed by CAN Accessories has a corresponding Accessory ID as indicated by the following table:
 
-[CAN Accessory IDs](https://www.notion.so/f77d696999a34ffc8d54b09842da4c63)
+| ID/Bit | Device          | Blinks |
+| :----: | :--------:      | :----: |
+| 0      | Headlights      | ⬜️    |
+| 1      | Breaklights     | ⬜️    |
+| 2      | Horn            | ⬜️    |
+| 3      | Hazards         | ✅    |
+| 4      | Right Indicator | ✅    |
+| 5      | Left Indicator  | ✅    |
+| 6      | Wipers          | ⬜️    |
 
 ## Operation Mode 0: Simple ON/OFF
 
