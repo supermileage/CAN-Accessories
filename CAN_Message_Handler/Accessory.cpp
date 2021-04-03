@@ -20,11 +20,10 @@ Accessory::Accessory(PinName pin, int initialState, bool blinks, int id, string 
 }
 
 void Accessory::updateState(int newState) {
-    Serial pc(USBTX, USBRX);
     if (currentState != newState){
-        pc.printf("%s changed to %s\n", name.c_str(), newState ? "ON" : "OFF");
+        Serial pc(USBTX, USBRX);
+        pc.printf(" \n%s turned %s\n", name.c_str(), newState ? "ON" : "OFF");
         //set accessory states
-        accessory = newState;
         currentState = newState;
         if ( newState && blinks ) {
             pc.printf("attaching %s to ticker\n", name.c_str());
@@ -33,6 +32,8 @@ void Accessory::updateState(int newState) {
             pc.printf("detaching %s from ticker\n", name.c_str());
             t.detach();
             //gotta make sure its toggled correctly lmao
+            accessory = newState;
+        } else if (!blinks) {
             accessory = newState;
         }
     }

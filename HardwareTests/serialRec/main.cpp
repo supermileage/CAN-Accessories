@@ -4,9 +4,6 @@
 //#define BLINKING_RATE_MS 1000
 
 // Initialize gate pins
-DigitalOut gate1(PB_0);
-DigitalOut gate2(PB_7);
-DigitalOut gate3(PB_6);
 
 DigitalOut debugPin(PA_8);
 DigitalOut led(LED3); // CAN transmission indicator light
@@ -24,22 +21,12 @@ int main() {
         if (can1.read(msg)) {
             led = !led;
             pc.printf("%d  -  ", msg.data[0]);
-            for (int i = 7; i >=0; --i){
-                bool bit = ((msg.data[0] & 1 << i) >> i) == 1;
-                pc.printf("%d", bit);
-                switch(i) {
-                    case 0:
-                        gate1 = bit;
-                        break;
-                    case 1:
-                        gate2 = bit;
-                        break;
-                    case 2:
-                        gate3 = bit;
-                        break;
-                    default:
-                        break;
+            for (int byte = 0; byte < msg.len; ++byte){
+                for (int i = 7; i >=0; --i){
+                    bool bit = ((msg.data[byte] & 1 << i) >> i) == 1;
+                    pc.printf("%d", bit);
                 }
+                pc.printf(" ");
             }
             pc.printf("\n");
         }

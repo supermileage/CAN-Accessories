@@ -2,6 +2,8 @@
 #include "CanHandler.h"
 #include "Accessory.h"
 
+#define CAN_ID 0x00A
+
 using namespace std;
 
 CAN can(PA_11, PA_12); // CAN pins
@@ -24,6 +26,7 @@ CanHandler::CanHandler() {
   pc.printf("CanHandler initializing - Setting CAN frequency to 500khz\n");
   wait(0.01); //This is here to prevent Serial output from getting garbled up. (And so we can remove it later on and claim that we improved load speeds by 50%)
   can.frequency(500000);
+  can.filter(CAN_ID, 0xFFF, CANStandard, 0); //Set CAN filter to only allow IDs of 0x00A, or 10. ID is 11 bits, thus 0x7FF masks all bits.
 }
 
 /**
@@ -32,19 +35,73 @@ CanHandler::CanHandler() {
 void CanHandler::handleMessages() {
   CANMessage msg;
   if (can.read(msg)) {
-    pc.printf("###########################################################\n");
+    //prints first byte of message in binary form
+    pc.printf("\n###########################################################\n");
     pc.printf("Message received: ");
-    for (int i = 7; i >=0; --i){
-      bool bit = ((msg.data[0] & 1 << i) >> i) == 1;
-      pc.printf("%d", bit);
+    // print out data bytes for debug
+    for (int b = 0; b < msg.len; ++b) {
+      for (int i = 7; i >=0; --i){
+        bool bit = ((msg.data[b] & 1 << i) >> i) == 1;
+        pc.printf("%d", bit);
+      }
+      pc.printf(" ");
     }
     pc.printf("\n");
-    for (int i = 0; i < (int)(sizeof(accessories)/sizeof(*accessories)); i++) {
-      pc.printf("\nchecking accessory - %s at bit %d\n", accessories[i]->name.c_str(), i);
-      int msgState = (msg.data[0] & (1 << accessories[i]->id)) >> accessories[i]->id;
+    switch(msg.data[0]){
+      case 0:
+        pc.printf("Operation mode 0 - one-hot");
+        handleOneHot(msg);
+        break;
+      case 1:
+        pc.printf("Operation mode 1 - toggle");
+        handleToggle(msg);
+        break;
+      case 2:
+        pc.printf("Operation mode 2 - switch - ID");
+        //stuff here
+        break;
+      default:
+        pc.printf("invalid operation mode, defaulting to one-hot");
+        handleOneHot(msg);
+        break;
+    }
+
+    
+  }
+}
+
+void CanHandler::handleOneHot(CANMessage msg) {
+  int b = 1;
+  int bit = 0;
+  printf("\n");
+  for (int i = 0; i < (int)(sizeof(accessories)/sizeof(*accessories)) && b < msg.len; i++) {
+      pc.printf("checking accessory - %s at bit %d\n", accessories[i]->name.c_str(), accessories[i]->id); // dont know why but id is not printing.
+      int msgState = (msg.data[b] & (1 << accessories[i]->id)) >> accessories[i]->id;
       if (msgState != accessories[i]->currentState) {
         accessories[i]->updateState(msgState);
       }
+      ++bit;
+      if (bit >= 8){
+        ++b;
+        bit = 0;
+      }
     }
-  }
+}
+
+void CanHandler::handleToggle(CANMessage msg) {
+  int b = 1;
+  int bit = 0;
+  printf("\n");
+  for (int i = 0; i < (int)(sizeof(accessories)/sizeof(*accessories)) && b < msg.len; i++) {
+      int msgState = (msg.data[b] & (1 << accessories[i]->id)) >> accessories[i]->id;
+      if (msgState) {
+        pc.printf("toggling accessory - %s\n", accessories[i]->name.c_str());
+        accessories[i]->updateState(!accessories[i]->currentState);
+      }
+      ++bit;
+      if (bit >= 8){
+        ++b;
+        bit = 0;
+      }
+    }
 }
