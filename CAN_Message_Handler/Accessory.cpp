@@ -4,7 +4,7 @@
 
 #define BLINK_RATE 0.5
 
-Accessory::Accessory(PinName pin, int initialState, bool blinks, int id, string name) : accessory(pin){
+Accessory::Accessory(PinName pin, int initialState, bool blinks, int id, int board, string name) : accessory(pin){
     Serial pc(USBTX, USBRX);
     pc.printf("Intializing %s to default state %s\n", name.c_str(), initialState ? "ON" : "OFF");
     wait(0.01); //This is here to prevent Serial output from getting garbled up. (And so we can remove it later on and claim that we improved load speeds by 50%)
@@ -17,6 +17,7 @@ Accessory::Accessory(PinName pin, int initialState, bool blinks, int id, string 
     this->blinks = blinks;
     this->id = id;
     this->name = name;
+    this->board = board;
 }
 
 void Accessory::updateState(int newState) {
