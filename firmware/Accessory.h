@@ -5,16 +5,17 @@
 
 class Accessory {
   public:
-    Accessory(PinName pin, int initialState, bool blinks, int id, int board, string name = "no name");
+    Accessory(PinName pin, int initialState, bool blinks, int id, int board, const char name[32] = "no name");
+    //Accessory();
     int currentState;
     bool blinks;
-    void updateState(int newState);
+    void updateState(bool newState);
     void blink();
     int id;
-    string name;
+    char name[32];
     int board;
   private:
-    DigitalOut accessory;
+    DigitalOut out;
     Ticker t;
 };
 
