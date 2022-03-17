@@ -42,7 +42,7 @@ int main( void ) {
     pc.printf("Setting up CAN..");
     DigitalOut can_stdby(CAN_STBY);
     can_stdby = 0;
-    if ( !can.filter(0x2, 0xFFF) ) {
+    if ( !can.filter(ACCESSORIES_CAN_ID, 0xFFF) ) {
         pc.printf("CAN message filter not set up.\r\n");
     }  // set up filter for accessories ID
     pc.printf(" Set up CAN\r\n");
@@ -139,8 +139,6 @@ int main( void ) {
                     pc.printf("Received Invalid Command\r\n");
                 break;
             }
-            
-
         }
     }
 }
