@@ -3,6 +3,19 @@
 #include "Accessory.h"
 #include <vector>
 
+std::vector<Accessory *> accessories;
+CAN can(CAN_RX, CAN_TX, 500000);
+
+void send_status () {
+    char msg[8] = {0};
+    int msg_counter = 0;
+    for ( Accessory *accessory : accessories ) {
+        msg[msg_counter++] = accessory->id << 1 | ( (accessory->currentState) ? 1 : 0 );
+    }
+
+    can.write(CANMessage(254, msg, 8));
+}
+
 int main( void ) {
     // setup IO
     DigitalOut led(LED);
@@ -27,16 +40,21 @@ int main( void ) {
     
     // Setup CAN
     pc.printf("Setting up CAN..");
-    CAN can(CAN_RX, CAN_TX);
     DigitalOut can_stdby(CAN_STBY);
-    can.frequency(500000);
     can_stdby = 0;
+    if ( !can.filter(0x2, 0xFFF) ) {
+        pc.printf("CAN message filter not set up.\r\n");
+    }  // set up filter for accessories ID
     pc.printf(" Set up CAN\r\n");
 
-    // TODO: make this real
-    int board = 1;
+    // Thread t;
+    // EventQueue queue (32 * EVENTS_EVENT_SIZE);
+    // t.start(callback(&queue, &EventQueue::dispatch_forever));
+    // Ticker telemetry_ticker; // ticker for accessories
+    // telemetry_ticker.attach(queue.event(&send_status), 2.0);
 
-    std::vector<Accessory *> accessories;
+    // TODO: make this real
+    int board = 2;
 
     for (
         unsigned int i = 0;
@@ -70,14 +88,16 @@ int main( void ) {
             * 1: Toggle Mode
             * 2: Accessory ON/OFF
             */
+            if (msg.id != 0x60) continue;
+            pc.printf(
+                "---------\r\nmessage received: 0x");
+            for(int i = 0; i < msg.len; ++i) {
+                pc.printf("%02x ",msg.data[i]);
+            }
+            pc.printf("\t\tid: %x", msg.id);
+            pc.printf("\r\n");
 
-           pc.printf(
-               "---------\r\nmessage received: 0x");
-           for(int i = 0; i < msg.len; ++i) {
-               printf("%02x ",msg.data[i]);
-           }
-           printf("\r\n");
-
+            
             switch(msg.data[0]){
                 // Simple ON/OFF - Byte 1 represents state of all accessories
                 case 0:
@@ -88,7 +108,7 @@ int main( void ) {
                         // find accessory
                         for (Accessory *accessory : accessories) {
                             if (accessory->id == i) {
-                                pc.printf("Turning %s %s", accessory->name, on ? "on" : "off");
+                                pc.printf("Turning %s %s\r\n", accessory->name, on ? "on" : "off");
                                 accessory->updateState(on);
                             }
                         }
@@ -104,6 +124,16 @@ int main( void ) {
                 case 2:
                     // TODO: implement this
                     pc.printf("Operation mode: 2 - Individual ON/OFF\r\n");
+                    for (int i = 1; i < msg.len; ++i) {
+                        int id = (msg.data[i] >> 1);
+                        bool status = msg.data[i] & 1;
+                        for (Accessory *accessory : accessories) {
+                            if (accessory->id == id) {
+                                pc.printf("Turning %s %s\r\n", accessory->name, status ? "on" : "off");
+                                accessory->updateState(status);
+                            }
+                        }
+                    }
                 break;
                 default:
                     pc.printf("Received Invalid Command\r\n");

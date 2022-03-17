@@ -27,7 +27,7 @@ int main() {
     while (true) {
         counter[1] ^= 0b11111111;  //toggle everything
         
-        if (can.write(CANMessage(10, counter, 2))) {
+        if (can.write(CANMessage(0x60, counter, 2))) {
             led = !led;
         }
         if (can.tderror()) {
@@ -36,6 +36,6 @@ int main() {
         else {
             debugPin = 0;
         }
-        wait(1);
+        wait(5);
     }
 }

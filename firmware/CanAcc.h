@@ -11,6 +11,10 @@
 #define GATE5       PB_5
 #define GATE6       PB_4
 
+#define ACCESSORIES_ID 0x80
+
+#define STATUS_PERIOD 1.0     // time in seconds between sending status updates
+
 /*
 * Accessory definitions
 * ID: id of accessory
@@ -75,9 +79,10 @@ namespace CanAcc
         unsigned int gate;
     };
 
+    // TODO: convert these into the macros
     constexpr AccInfo acc_info_list[] = {
         // {id, boards, name, blinks, gates}
-        {0, 0b01, "Headlights", 0, false, 1},
+        {0, 0b11, "Headlights / Running lights", 0, false, 1},
         {1, 0b10, "Brakelights", 0, false, 2},
         {2, 0b01, "Horn", 0, false, 3},
         {4, 0b11, "Right Indicators", 1, true, 4},
